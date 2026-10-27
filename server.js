@@ -297,7 +297,12 @@ ${contextText}`;
 
       let llmReply = "";
       try {
-        llmReply = await callGroqChat(messages, process.env.GROQ_MODEL || "qwen/qwen3.8-27b", 0.2);
+        if (!process.env.GROQ_API_KEY) {
+          console.info("GROQ_API_KEY not configured, using local grounded synthesis for strict mode.");
+          llmReply = grounding.answer;
+        } else {
+          llmReply = await callGroqChat(messages, process.env.GROQ_MODEL || "qwen/qwen3.8-27b", 0.2);
+        }
       } catch (apiErr) {
         console.warn("Groq API error in strict mode, falling back to local grounded synthesis:", apiErr.message);
         llmReply = grounding.answer;
@@ -315,6 +320,16 @@ ${contextText}`;
       });
     } else {
       // General Mode: Open AI conversation without context restrictions
+      if (!process.env.GROQ_API_KEY) {
+        return res.json({
+          isRefusal: false,
+          mode: "general",
+          reply: `⚠️ **GROQ_API_KEY Missing on Deployed Server**\n\nTo use **General Mode (Open AI)** on your live deployed site, please configure your \`GROQ_API_KEY\` in your hosting dashboard:\n\n**For Netlify:**\n1. Open your [Netlify Dashboard](https://app.netlify.com/) → Select your site.\n2. Go to **Site configuration** → **Environment variables**.\n3. Click **Add a variable** → **Add a single variable**:\n   - **Key:** \`GROQ_API_KEY\`\n   - **Value:** \`gsk_...\` (your Groq key)\n4. Click **Create variable**, then go to **Deploys** → **Trigger deploy**.\n\n*💡 In the meantime, **Strict Mode** works 100% right now directly from your notes!*`,
+          evidence: [],
+          demoChecklistState
+        });
+      }
+
       const systemPrompt = `You are an intelligent, encouraging AI Study Companion and academic tutor.
 1. Provide clear, accurate, and structured explanations to the student's questions.
 2. Use relatable analogies, examples, and formulas where appropriate.
