@@ -4,6 +4,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const { SAMPLE_TOPICS } = require("./sampleNotes");
 const { GemmaGroundingEngine } = require("./gemmaEngine");
 
@@ -32,6 +33,65 @@ app.get("/quiz", (req, res) => {
 });
 
 const engine = new GemmaGroundingEngine();
+
+// Native .env file loader (zero extra dependencies)
+function loadEnv() {
+  const envPath = path.join(__dirname, ".env");
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, "utf8").split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const match = trimmed.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        const val = match[2].trim().replace(/^["']|["']$/g, "");
+        if (!process.env[key]) process.env[key] = val;
+      }
+    }
+  }
+}
+loadEnv();
+
+// Helper to call Groq Chat API with automatic fallback
+async function callGroqChat(messages, model = process.env.GROQ_MODEL || "qwen/qwen3.8-27b", temperature = 0.3) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error("GROQ_API_KEY is not configured in .env file.");
+  }
+
+  // Sanitize messages so Groq/OpenAI never rejects unexpected properties like 'evidence'
+  const cleanMessages = messages.map(m => ({
+    role: String(m.role || "user"),
+    content: String(m.content || "")
+  }));
+
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: cleanMessages,
+      temperature: temperature,
+      max_tokens: 1024
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    if (model !== "openai/gpt-oss-120b") {
+      console.warn(`Groq request with ${model} failed, attempting fallback to openai/gpt-oss-120b...`);
+      return callGroqChat(messages, "openai/gpt-oss-120b", temperature);
+    }
+    throw new Error(`Groq API error (${response.status}): ${errText}`);
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "No response received from AI model.";
+}
 
 // In-memory active session state
 let activeTopicId = "electricity";
@@ -178,6 +238,109 @@ apiRouter.post("/ask", (req, res) => {
     ...result,
     demoChecklistState
   });
+});
+
+// 5b. Dual-Mode AI Chatbot with Groq API (Strict vs General, 3 Conversations History)
+apiRouter.post("/chat", async (req, res) => {
+  try {
+    const { message, mode = "strict", history = [] } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: "Message cannot be empty." });
+    }
+
+    // Keep only the last 3 conversations (max 6 messages: 3 user + 3 assistant)
+    // Strictly sanitize to { role, content } so Groq never rejects custom fields
+    const validHistory = (Array.isArray(history) ? history.slice(-6) : [])
+      .filter(item => item && (item.role === "user" || item.role === "assistant") && typeof item.content === "string")
+      .map(item => ({ role: item.role, content: item.content }));
+
+    if (mode === "strict") {
+      // Step 1: Check context match against active indexed notes
+      const grounding = engine.answerQuestion(activeIndexedNotes, message);
+
+      // Strict mode: If not found in uploaded notes, strictly REFUSE and DO NOT call Groq API!
+      if (grounding.isRefusal) {
+        demoChecklistState.step4_unsupported_qa_refused = true;
+        return res.json({
+          isRefusal: true,
+          mode: "strict",
+          reply: `⛔ **Not Found in Notes**\n\nThis question cannot be answered because the verified facts or keywords are not present in your uploaded notes (*${SAMPLE_TOPICS[activeTopicId]?.title || 'Uploaded Notes'}*).\n\n💡 *Tip: In **Strict Mode**, I only answer facts directly verified in your notes. Switch to **General Mode** above to ask broader questions using open AI knowledge.*`,
+          refusalReason: grounding.message,
+          evidence: [],
+          demoChecklistState
+        });
+      }
+
+      // Step 2: Context matched! Assemble grounded context from notes
+      demoChecklistState.step2_supported_qa_run = true;
+      const contextText = grounding.evidence.map((ev, i) => 
+        `[Citation ${i + 1}] (${ev.section}, Paragraph ${ev.paragraph}): "${ev.verbatimQuote}"`
+      ).join("\n\n");
+
+      const systemPrompt = `You are an academic Study Companion strictly grounded in the user's uploaded lecture notes on "${SAMPLE_TOPICS[activeTopicId]?.title || 'Course Material'}".
+
+STRICT GROUNDING RULES:
+1. Answer the student's question accurately, directly, and EXCLUSIVELY using the Note Context provided below.
+2. Cite the exact Section and Paragraph number from the context for each key point.
+3. Quote relevant verbatim phrases from the context to verify your statements.
+4. If an aspect of the question is NOT answered in the Note Context, explicitly state: "This detail is not mentioned in the notes." Do NOT guess or hallucinate external facts.
+5. Format the answer cleanly using markdown with bold headings and bullet points where helpful.
+
+VERIFIED NOTE CONTEXT:
+${contextText}`;
+
+      const messages = [
+        { role: "system", content: systemPrompt },
+        ...validHistory,
+        { role: "user", content: message }
+      ];
+
+      let llmReply = "";
+      try {
+        llmReply = await callGroqChat(messages, process.env.GROQ_MODEL || "qwen/qwen3.8-27b", 0.2);
+      } catch (apiErr) {
+        console.warn("Groq API error in strict mode, falling back to local grounded synthesis:", apiErr.message);
+        llmReply = grounding.answer;
+      }
+
+      return res.json({
+        isRefusal: false,
+        mode: "strict",
+        reply: llmReply,
+        groundingConfidence: grounding.groundingConfidence,
+        evidence: grounding.evidence,
+        primarySentenceId: grounding.primarySentenceId,
+        primaryParagraphIndex: grounding.primaryParagraphIndex,
+        demoChecklistState
+      });
+    } else {
+      // General Mode: Open AI conversation without context restrictions
+      const systemPrompt = `You are an intelligent, encouraging AI Study Companion and academic tutor.
+1. Provide clear, accurate, and structured explanations to the student's questions.
+2. Use relatable analogies, examples, and formulas where appropriate.
+3. If explaining technical or scientific topics, make it intuitive and easy to remember.
+4. Format your answer with clean markdown, bold terms, and bullet points.`;
+
+      const messages = [
+        { role: "system", content: systemPrompt },
+        ...validHistory,
+        { role: "user", content: message }
+      ];
+
+      const llmReply = await callGroqChat(messages, process.env.GROQ_MODEL || "qwen/qwen3.8-27b", 0.6);
+
+      return res.json({
+        isRefusal: false,
+        mode: "general",
+        reply: llmReply,
+        evidence: [],
+        demoChecklistState
+      });
+    }
+  } catch (error) {
+    console.error("Chat endpoint error:", error);
+    res.status(500).json({ error: error.message || "Failed to process chat message." });
+  }
 });
 
 // 6. Get practice quiz

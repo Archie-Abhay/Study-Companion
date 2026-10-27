@@ -70,6 +70,20 @@ const API = {
     return res.json();
   },
 
+  // Dual-mode AI Chatbot with Groq API (Strict vs General mode, last 3 turns history)
+  async chatWithAI(message, mode = "strict", history = []) {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, mode, history })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || "Chat request failed");
+    }
+    return res.json();
+  },
+
   // Get current active quiz
   async getQuiz() {
     const res = await fetch("/api/quiz");
