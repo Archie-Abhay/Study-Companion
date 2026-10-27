@@ -3,6 +3,9 @@
   publish = "public"
   functions = "netlify/functions"
 
+[functions]
+  included_files = ["electricity_notes.md"]
+
 # Multi-page HTML route rewrites
 [[redirects]]
   from = "/upload"

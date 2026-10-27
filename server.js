@@ -34,8 +34,8 @@ app.get("/quiz", (req, res) => {
 const engine = new GemmaGroundingEngine();
 
 // In-memory active session state
-let activeTopicId = "cellular_respiration";
-let activeRawNotes = SAMPLE_TOPICS.cellular_respiration.content;
+let activeTopicId = "electricity";
+let activeRawNotes = SAMPLE_TOPICS.electricity.content;
 let activeIndexedNotes = engine.indexNotes(activeRawNotes);
 let activeQuiz = engine.generatePracticeQuiz(activeIndexedNotes, activeTopicId, 5);
 
@@ -255,7 +255,7 @@ apiRouter.post("/quiz/evaluate", (req, res) => {
 
 // 8. Get Live Demo Checklist status & presets
 apiRouter.get("/demo-checklist", (req, res) => {
-  const currentDemo = SAMPLE_TOPICS[activeTopicId] || SAMPLE_TOPICS.cellular_respiration;
+  const currentDemo = SAMPLE_TOPICS[activeTopicId] || SAMPLE_TOPICS.electricity;
   res.json({
     checklistState: demoChecklistState,
     items: [
@@ -301,7 +301,7 @@ if (!process.env.NETLIFY && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
     console.log(`=======================================================`);
     console.log(`🚀 Gemma 4 Grounded Study Companion server online!`);
     console.log(`📍 Web App URL: http://localhost:${PORT}`);
-    console.log(`📚 Active Topic: ${SAMPLE_TOPICS[activeTopicId]?.title || 'Cellular Respiration'}`);
+    console.log(`📚 Active Topic: ${SAMPLE_TOPICS[activeTopicId]?.title || 'Electricity: Complete Study Notes'}`);
     console.log(`🎯 Live Demo Checklist ready with 1-click execution`);
     console.log(`=======================================================`);
   });

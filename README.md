@@ -19,9 +19,9 @@ Rather than creating an over-engineered Learning Management System, this project
 
 | Step | Requirement | Implementation & Verification | Live Demo Trigger | Status |
 |---|---|---|---|---|
-| **1** | **Load sample notes on one academic topic** | Multi-page academic notes on *Cellular Respiration & Bioenergetics* (BIOL 201), with alternate presets for *Virtual Memory & Paging* (CS 340) and *Deep Learning Transformers* (CS 482). | Top Bar: `01 Load Sample Notes` | **PASSED** |
-| **2** | **Ask supported question & inspect evidence** | Query: *"What is the final electron acceptor in the electron transport chain, and what molecule is formed when it accepts electrons?"*<br>Answers strictly with 99.2% confidence and cites exact sentences (Complex IV & H2O formation), automatically highlighting the sentence in glowing emerald. | Top Bar: `02 Ask Supported Q` | **PASSED** |
-| **3** | **Intentionally answer quiz question incorrectly** | Intentionally selects `Option B: NAD+` (incorrect). The Gemma 4 coach displays: (1) Misconception Diagnosis, (2) Progressive Pedagogical Hint, and (3) Verbatim Note Citation coordinates with auto-highlight. | Top Bar: `03 Test Quiz Mistake` | **PASSED** |
+| **1** | **Load sample notes on one academic topic** | Multi-page academic notes on *Electricity: Complete Study Notes* (Class 10 Physics / Science). | Top Bar: `01 Load Sample Notes` | **PASSED** |
+| **2** | **Ask supported question & inspect evidence** | Query: *"What does Ohm's law state, and what physical quantity does the slope of the voltage versus current graph represent?"*<br>Answers strictly with high confidence and cites exact sentences (Ohm's law & conductor resistance), automatically highlighting the sentence in glowing emerald. | Top Bar: `02 Ask Supported Q` | **PASSED** |
+| **3** | **Intentionally answer quiz question incorrectly** | Select an incorrect option. The Gemma 4 coach displays: (1) Misconception Diagnosis, (2) Progressive Pedagogical Hint, and (3) Verbatim Note Citation coordinates with auto-highlight. | Top Bar: `03 Test Quiz Mistake` | **PASSED** |
 | **4** | **Ask unsupported question to prove zero hallucination** | Query: *"What is the maximum lifespan of Drosophila melanogaster fruit flies when fed on a sucrose-restricted diet?"*<br>Triggers the **Explicit Refusal Guardrail** with missing keywords breakdown, refusing to hallucinate external facts. | Top Bar: `04 Test Refusal Guardrail` | **PASSED** |
 
 ---
@@ -49,7 +49,7 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 - **`server.js`**: Express backend providing REST endpoints (`/api/ask`, `/api/quiz`, `/api/quiz/generate`, `/api/quiz/evaluate`, `/api/load-topic`, `/api/upload-notes`, `/api/demo-checklist`).
 - **`gemmaEngine.js`**: Core Gemma 4 grounding engine, BM25 ranker, token segmentation, dynamic quiz generator, and zero-hallucination guardrail.
-- **`sampleNotes.js`**: Curated, high-yield academic lecture notes on Cellular Respiration & Bioenergetics (BIOL 201).
+- **`sampleNotes.js`**: Curated, high-yield academic lecture notes on Electricity: Complete Study Notes (Class 10 Level).
 - **`public/`**:
   - `index.html`: Clean landing page introducing the sequential learning flow.
   - `upload.html`: Notes upload & intake studio (supports drag-and-drop `.txt`, `.md`, or pasting, plus 1-click sample topic).
