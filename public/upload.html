@@ -5,14 +5,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="Study Companion — Upload lecture notes, ask questions with highlighted evidence, and test knowledge with practice quizzes.">
+    content="Study Companion — Upload or paste lecture notes, inspect live metrics, and configure your study workspace.">
   <title>Study Companion — Upload Notes</title>
 
-  <!-- High-legibility geometric sans-serif: Inter -->
+  <!-- Prevent theme flash before paint -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('study_theme_preference');
+        var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { }
+    })();
+  </script>
+
+  <!-- Google Fonts: Newsreader (Editorial Serif) + Plus Jakarta Sans (UI Sans) + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
@@ -34,37 +45,51 @@
             </svg>
           </div>
           <div class="brand-text-group">
-            <span class="brand-title">Study Companion <span class="brand-sep">/</span> <span class="brand-sub">Real
-                Notes</span></span>
+            <span class="brand-title">Study Companion <span class="brand-sep">/</span> <span class="brand-sub">Real Notes</span></span>
           </div>
         </div>
       </a>
-      <div class="engine-status" title="System ready">
+      <div class="engine-status" title="Grounding system ready">
         <span class="status-indicator-dot"></span>
-        <span class="status-text">Ready</span>
+        <span class="status-text">Material Ready</span>
       </div>
     </div>
 
     <div class="header-right">
+      <!-- Theme Switcher -->
+      <button type="button" class="theme-toggle-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
+        <svg class="theme-icon-light" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
       <a href="/" class="btn-ghost" title="Back to Home">
-        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
+        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
         <span>Home</span>
       </a>
       <a href="/study" class="btn-ghost" title="Go directly to study session">
-        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
+        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
           <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
         </svg>
         <span>Study Notes</span>
       </a>
       <a href="/quiz" class="btn-secondary" title="Practice quiz studio">
-        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
+        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="9 11 12 14 22 4" />
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
         </svg>
@@ -79,14 +104,14 @@
   <nav class="learning-flow-stepper" aria-label="Sequential Learning Steps">
     <div class="flow-step active" id="flowStep1" title="Step 1: Upload notes or choose a sample topic">
       <span class="flow-num">1</span>
-      <span class="flow-title">Upload Notes</span>
+      <span class="flow-title">1. Upload Notes</span>
     </div>
     <span class="flow-divider" aria-hidden="true">→</span>
 
     <a href="/study" class="flow-step-link">
       <div class="flow-step" id="flowStep2" title="Step 2: Ask questions with evidence">
         <span class="flow-num">2</span>
-        <span class="flow-title">Ask Questions & Evidence</span>
+        <span class="flow-title">2. Ask Questions & Evidence</span>
       </div>
     </a>
     <span class="flow-divider" aria-hidden="true">→</span>
@@ -94,30 +119,28 @@
     <a href="/quiz" class="flow-step-link">
       <div class="flow-step" id="flowStep3" title="Step 3: Practice quiz with 5 to 15 questions limit">
         <span class="flow-num">3</span>
-        <span class="flow-title">Practice Quiz (5–15 Qs)</span>
+        <span class="flow-title">3. Practice Quiz (5–15 Qs)</span>
       </div>
     </a>
   </nav>
 
   <!-- ======================================================================
-       3. Main Home Intake Layout
+       3. Main Upload Intake Layout
        ====================================================================== -->
   <main class="home-container">
     <div class="home-hero">
       <h1 class="home-hero-title">Upload Your Study Material</h1>
       <p class="home-hero-desc">
-        Paste or drop your lecture notes below, or select a sample course module to begin asking questions and
-        practicing quizzes.
+        Paste or drop your lecture notes below, or select a verified sample module to begin grounded question answering and practice quizzes.
       </p>
     </div>
 
     <div class="home-grid">
-      <!-- Left Card: Upload or Paste Custom Notes -->
+      <!-- Left Column: Upload or Paste Custom Notes -->
       <section class="home-card intake-card" aria-label="Upload or Paste Study Material">
         <div class="card-header-clean">
           <div class="card-icon-title">
-            <svg class="btn-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
+            <svg class="btn-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
@@ -141,8 +164,7 @@
 
         <!-- File Upload Dropzone -->
         <div class="drop-zone" id="dropZone">
-          <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="1.75">
+          <svg class="drop-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
             <line x1="12" y1="3" x2="12" y2="15" />
@@ -180,28 +202,27 @@
         </div>
       </section>
 
-      <!-- Right Card: Curated Academic Topic -->
+      <!-- Right Column: Curated Academic Sample Topic -->
       <section class="home-card presets-card" aria-label="Sample Academic Topic">
         <div class="card-header-clean">
           <div class="card-icon-title">
-            <svg class="btn-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
+            <svg class="btn-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7" />
               <rect x="14" y="3" width="7" height="7" />
               <rect x="14" y="14" width="7" height="7" />
               <rect x="3" y="14" width="7" height="7" />
             </svg>
-            <h2 class="card-heading">Sample Academic Topic</h2>
+            <h2 class="card-heading">Curated Sample Module</h2>
           </div>
-          <span class="header-pill">1 Sample Topic</span>
+          <span class="header-pill">1 Verified Topic</span>
         </div>
 
         <p class="presets-intro-text">
-          Load our verified sample topic to immediately test question answering and practice quizzes:
+          Load our prepared physics curriculum to immediately test verbatim evidence retrieval and practice quizzes:
         </p>
 
         <div class="preset-cards-list" id="presetContainer">
-          <!-- Populated by home.js with the single curated topic -->
+          <!-- Populated by home.js with the curated topic -->
           <div class="preset-loading-skeleton">Loading sample topic…</div>
         </div>
       </section>
@@ -211,11 +232,13 @@
   <footer class="app-footer">
     <div class="footer-inner">
       <span>Study Companion — Learn directly from your notes</span>
+      <span>Step 1 of 3</span>
     </div>
   </footer>
 
   <script src="js/shared.js"></script>
   <script src="js/home.js"></script>
+  <script src="js/theme.js"></script>
 </body>
 
 </html>

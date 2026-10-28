@@ -1,18 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Practice Quiz — Test your knowledge with 5 to 15 questions directly from your notes.">
+  <meta name="description"
+    content="Practice Quiz Studio — Test your knowledge with 5 to 15 practice questions generated strictly from your notes.">
   <title>Study Companion — Practice Quiz</title>
 
-  <!-- High-legibility geometric sans-serif: Inter -->
+  <!-- Prevent theme flash before paint -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('study_theme_preference');
+        var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { }
+    })();
+  </script>
+
+  <!-- Google Fonts: Newsreader (Editorial Serif) + Plus Jakarta Sans (UI Sans) + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body class="page-body">
 
   <!-- ======================================================================
@@ -23,7 +39,10 @@
       <a href="/" class="brand-link" title="Return to Home">
         <div class="brand">
           <div class="brand-icon" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
           </div>
           <div class="brand-text-group">
             <span class="brand-title">Study Companion <span class="brand-sep">/</span> <span class="brand-sub">Real Notes</span></span>
@@ -37,15 +56,36 @@
         <span class="topic-name" id="quizTopicTitle">Loading active topic…</span>
       </div>
 
-      <div class="engine-status" title="Quiz ready">
+      <div class="engine-status" title="Quiz generation ready">
         <span class="status-indicator-dot"></span>
         <span class="status-text">Quiz Ready</span>
       </div>
     </div>
 
     <div class="header-right">
+      <!-- Theme Switcher -->
+      <button type="button" class="theme-toggle-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
+        <svg class="theme-icon-light" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
       <a href="/study" class="btn-secondary" title="Return to study questions">
-        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
         <span>← Back to Questions</span>
       </a>
     </div>
@@ -73,7 +113,7 @@
 
     <div class="flow-step active" id="flowStep3" title="Step 3: Practice Quiz (5 to 15 questions limit)">
       <span class="flow-num">3</span>
-      <span class="flow-title">Practice Quiz (5–15 Qs)</span>
+      <span class="flow-title">3. Practice Quiz (5–15 Qs)</span>
     </div>
   </nav>
 
@@ -86,12 +126,15 @@
     <section class="quiz-config-card" id="quizSetupPanel" aria-label="Configure Practice Quiz">
       <div class="config-header">
         <div class="config-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>
         </div>
         <div>
           <h1 class="config-title">Practice Quiz from Notes</h1>
           <p class="config-desc">
-            Choose how many practice questions you want to generate (between <strong>5 and 15 questions</strong>) based on your notes.
+            Select between <strong>5 and 15 questions</strong> tailored strictly to your verified lecture material.
           </p>
         </div>
       </div>
@@ -107,7 +150,8 @@
           <span class="limit-bound-marker">5 (Min)</span>
           <input type="range" id="quizCountSlider" class="quiz-range-slider" min="5" max="15" step="1" value="5">
           <span class="limit-bound-marker">15 (Max)</span>
-          <input type="number" id="quizCountInput" class="quiz-number-input" min="5" max="15" value="5" aria-label="Exact question count">
+          <input type="number" id="quizCountInput" class="quiz-number-input" min="5" max="15" value="5"
+            aria-label="Exact question count">
         </div>
 
         <!-- Quick Pill Selectors -->
@@ -125,16 +169,19 @@
       <div class="config-section">
         <label for="quizDifficultySelect" class="config-label">Difficulty Level:</label>
         <select id="quizDifficultySelect" class="config-select">
-          <option value="Adaptive">Adaptive (Adjusts as you answer)</option>
+          <option value="Adaptive">Adaptive (Calibrates to your answers)</option>
           <option value="Foundational">Foundational (Core terms & definitions)</option>
-          <option value="Analytical">Analytical (Mechanisms & concepts)</option>
-          <option value="Rigorous">Advanced (Complex questions)</option>
+          <option value="Analytical">Analytical (Mechanisms & relationships)</option>
+          <option value="Rigorous">Advanced (Complex multi-step problems)</option>
         </select>
       </div>
 
       <div class="config-action-row">
         <button type="button" class="btn-primary btn-large btn-full" id="btnGenerateQuiz">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>
           <span>Generate Practice Quiz</span>
         </button>
       </div>
@@ -169,7 +216,7 @@
       <!-- Question Card -->
       <div class="question-body-card">
         <div class="q-meta-row">
-          <span class="q-concept-badge" id="qConcept">Electric Potential & Ohm's Law</span>
+          <span class="q-concept-badge" id="qConcept">Academic Concept</span>
           <span class="q-difficulty-badge" id="qDifficulty">Analytical</span>
         </div>
 
@@ -185,11 +232,18 @@
           <div class="hints-btn-row">
             <span class="hints-intro-label">Progressive Hints:</span>
             <button type="button" class="btn-ghost btn-xs btn-hint-toggle" id="btnHint1">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
               <span>Hint 1: Conceptual Clue</span>
             </button>
             <button type="button" class="btn-ghost btn-xs btn-hint-toggle" id="btnHint2">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+              </svg>
               <span>Hint 2: Note Location</span>
             </button>
           </div>
@@ -208,7 +262,9 @@
         <!-- Question Actions -->
         <div class="q-actions-row">
           <button type="button" class="btn-primary" id="btnSubmitAnswer" disabled>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
             <span>Submit Answer</span>
           </button>
           <button type="button" class="btn-primary" id="btnNextQuestion" style="display:none;">
@@ -235,7 +291,10 @@
     <!-- PANEL 3: Quiz Scorecard Summary -->
     <section class="quiz-summary-card" id="quizSummaryPanel" style="display:none;" aria-label="Quiz Results Summary">
       <div class="summary-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
       </div>
       <h2 class="summary-title">Practice Quiz Completed</h2>
       <div class="summary-score-large" id="scorePercentText">80% Accuracy</div>
@@ -247,15 +306,31 @@
 
       <div class="summary-actions-row">
         <button type="button" class="btn-secondary" id="btnRetakeQuiz">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
           <span>Retake Quiz</span>
         </button>
         <button type="button" class="btn-secondary" id="btnReconfigQuiz">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="21" x2="4" y2="14" />
+            <line x1="4" y1="10" x2="4" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12" y2="3" />
+            <line x1="20" y1="21" x2="20" y2="16" />
+            <line x1="20" y1="12" x2="20" y2="3" />
+            <line x1="1" y1="14" x2="7" y2="14" />
+            <line x1="9" y1="8" x2="15" y2="8" />
+            <line x1="17" y1="16" x2="23" y2="16" />
+          </svg>
           <span>Change Question Count</span>
         </button>
         <a href="/study" class="btn-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
           <span>Return to Study Notes</span>
         </a>
       </div>
@@ -265,5 +340,7 @@
 
   <script src="js/shared.js"></script>
   <script src="js/quiz.js"></script>
+  <script src="js/theme.js"></script>
 </body>
+
 </html>

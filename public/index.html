@@ -5,14 +5,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="Study Companion — An interactive academic study partner strictly grounded in your lecture notes.">
+    content="Study Companion — An academic study tool strictly grounded in your lecture notes with zero AI hallucination.">
   <title>Study Companion — Home</title>
 
-  <!-- High-legibility geometric sans-serif: Inter -->
+  <!-- Prevent theme flash before paint -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('study_theme_preference');
+        var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { }
+    })();
+  </script>
+
+  <!-- Google Fonts: Newsreader (Editorial Serif) + Plus Jakarta Sans (UI Sans) + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
@@ -21,33 +32,50 @@
 <body class="page-body">
 
   <!-- ======================================================================
-       1. Application Header with Top Right "Start Studying" Button
+       1. Application Header with Brand, Engine Status, Theme Toggle & CTA
        ====================================================================== -->
   <header class="app-header">
     <div class="header-left">
-      <div class="brand">
-        <div class="brand-icon" aria-hidden="true">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          </svg>
+      <a href="/" class="brand-link" title="Study Companion Home">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </div>
+          <div class="brand-text-group">
+            <span class="brand-title">Study Companion <span class="brand-sep">/</span> <span class="brand-sub">Real Notes</span></span>
+          </div>
         </div>
-        <div class="brand-text-group">
-          <span class="brand-title">Study Companion <span class="brand-sep">/</span> <span class="brand-sub">Real
-              Notes</span></span>
-        </div>
-      </div>
-      <div class="engine-status" title="System ready">
+      </a>
+      <div class="engine-status" title="Grounding system ready">
         <span class="status-indicator-dot"></span>
-        <span class="status-text">Ready</span>
+        <span class="status-text">Material Ready</span>
       </div>
     </div>
 
-    <!-- Right Top Corner: Prominent Button to Upload Notes / Start Studying -->
     <div class="header-right">
+      <!-- Theme Switcher -->
+      <button type="button" class="theme-toggle-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
+        <svg class="theme-icon-light" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon-dark" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
       <a href="/upload" class="btn-primary" id="btnTopRightStart">
-        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
+        <svg class="btn-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="17 8 12 3 7 8" />
           <line x1="12" y1="3" x2="12" y2="15" />
@@ -58,55 +86,52 @@
   </header>
 
   <!-- ======================================================================
-       2. Clean Landing Hero Section (2-3 Line Project Introduction)
+       2. Clean Academic Landing Hero
        ====================================================================== -->
   <main class="landing-main">
     <section class="landing-hero">
-      <div class="landing-badge">Academic Learning Support</div>
+      <div class="landing-badge">Focused Academic Workspace</div>
       <h1 class="landing-title">Study Companion from Real Notes</h1>
       <p class="landing-desc">
-        An academic companion designed to help you study directly from your own lecture notes.<br>
-        Ask questions to view verified answers with exact highlighted text evidence, or test your retention with
-        customized practice quizzes.
+        A quiet study tool built directly around your lecture notes.
+        Ask questions to see verified explanations with exact source sentences highlighted in your text, or take tailored practice quizzes with diagnostic misconception analysis.
       </p>
 
       <div class="landing-actions-row">
         <a href="/upload" class="btn-primary btn-large" id="btnHeroUpload">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
             <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
-          <span>Upload Notes & Start Studying →</span>
+          <span>Upload Notes & Begin →</span>
         </a>
       </div>
     </section>
 
-    <!-- 3 Simple Workflow Highlights -->
-    <section class="landing-steps-grid" aria-label="How It Works">
+    <!-- 3 Step Sequence Row -->
+    <section class="landing-steps-grid" aria-label="Learning Progression Flow">
       <div class="landing-step-card">
         <div class="landing-step-badge">1</div>
-        <h2 class="landing-step-title">Upload Course Notes</h2>
+        <h2 class="landing-step-title">Upload Course Material</h2>
         <p class="landing-step-text">
-          Upload or paste lecture text, slides, or transcripts. You can also pick from prepared academic sample topics.
+          Paste lecture text, drop markdown/text files, or explore prepared course modules with live word and sentence metrics.
         </p>
       </div>
 
       <div class="landing-step-card">
         <div class="landing-step-badge">2</div>
-        <h2 class="landing-step-title">Ask Questions & Inspect Evidence</h2>
+        <h2 class="landing-step-title">Grounded Q&A & Evidence</h2>
         <p class="landing-step-text">
-          Submit questions to get verified answers with exact paragraph numbers and highlighted verbatim quotes in your
-          notes.
+          Ask questions in a split-screen reader. Answers cite exact paragraphs with warm marker highlighting and zero hallucination.
         </p>
       </div>
 
       <div class="landing-step-card">
         <div class="landing-step-badge">3</div>
-        <h2 class="landing-step-title">Practice Quizzes (5–15 Qs)</h2>
+        <h2 class="landing-step-title">Adaptive Practice Quizzes</h2>
         <p class="landing-step-text">
-          Generate quizzes tailored to your notes. Get immediate feedback, progressive hints, and highlighted correct
-          answers.
+          Configure 5 to 15 practice questions. Test your retention with progressive hints and targeted misconception feedback.
         </p>
       </div>
     </section>
@@ -117,10 +142,12 @@
        ====================================================================== -->
   <footer class="app-footer">
     <div class="footer-inner">
-      <span>Study Companion — Learn directly from your notes</span>
+      <span>Study Companion — Grounded Learning from Lecture Notes</span>
+      <span>Step 1 of 3</span>
     </div>
   </footer>
 
+  <script src="js/theme.js"></script>
 </body>
 
 </html>
