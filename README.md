@@ -1,6 +1,8 @@
 # 🌟 Gemma 4 Grounded Study Companion
-> **Track 1 - PS 01: Study Companion from Real Notes (Focus: Learning Support)**  
+> **: Study Companion from Real Notes (Focus: Learning Support)**  
 > *A clean, intuitive study companion web application focused on academic topics and real notes, powered centrally by the Gemma 4 Grounding Engine.*
+>
+> live link: https://curious-babka-62ae06.netlify.app/
 
 ---
 
